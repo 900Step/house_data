@@ -57,7 +57,7 @@ dotplot <- function(df, x,y) {
   ggplot(df) +
     # color is determained by the exist disaster
     # shape is given by the building type
-    geom_point(aes(longitude, latitude, col = exist_dis,shape = building_type, size = log(1+const_scale) ))+
+    geom_point(aes(longitude, latitude, col = exist_dis,shape = building_type, size = log(1+const_scale) ), alpha = 0.5)+
     geom_point(aes(x, y, size = 10)) +
     coord_cartesian(xlim = c(128, 130), ylim = c(42, 44))
 }
@@ -90,20 +90,28 @@ histplot <- function(df){
     geom_histogram(aes(x = log(1+const_scale), fill = "red"),alpha = 0.5, bins = 15)
 }
 
-
+text <- p("This is an app to select the building in the certain region. 
+              The center is a simulation of the earthquake center. 
+              Distance is the region we interested in. 
+              There are 3 types of buildings and 3 levels of exist disaster we can choose.")
+statsment <- p("Because of the data itself, the region of the longitude and the latitude is limited. 
+               From the background research, we set the maximize distance to be 10km. ")
 # Shiny part
 ui <- fluidPage(
   titlePanel("House Information"),
+  mainPanel(text),
+  sidebarPanel(statsment),
   # check box for built years
   # select the dictance region todo the selection
-  sliderInput("distance", "Distance", 0, 100000, c(0, 50000), sep = ""),
-  checkboxGroupInput("building_type", "Building Type", choices = building_types, selected = building_types),
-  # selectInput("building_type", "Building Type", building_types, multiple = TRUE),
-  selectInput("exist_dis", "Exist Disaster Level", exist_dis, multiple = TRUE),
   # set the center
   numericInput("longitude", "Center longitude,Suggest region: [129.0, 129.8]", 129.45),
   numericInput("latitude", "Center latitude,Suggest region: [42.7, 43.4]", 43.15),
   
+  sliderInput("distance", "Distance(scale: m)", 0, 100000, c(0, 50000), sep = ""),
+  checkboxGroupInput("building_type", "Building Type", choices = building_types, selected = building_types),
+  # selectInput("building_type", "Building Type", building_types, multiple = TRUE),
+  selectInput("exist_dis", "Exist Disaster Level", exist_dis, multiple = TRUE),
+
   # first, generate a plot as the output
   textOutput("checkbox"),
   # left and right
